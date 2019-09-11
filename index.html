@@ -355,11 +355,19 @@
                 
               
 
-              <time title="创建时间：2019-08-25 10:51:06 / 修改时间：10:51:28" itemprop="dateCreated datePublished" datetime="2019-08-25T10:51:06+08:00">2019-08-25</time>
+              <time title="创建时间：2019-08-25 10:51:06" itemprop="dateCreated datePublished" datetime="2019-08-25T10:51:06+08:00">2019-08-25</time>
             </span>
           
             
 
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2019-09-11 17:04:44" itemprop="dateModified" datetime="2019-09-11T17:04:44+08:00">2019-09-11</time>
+              </span>
             
           
 
@@ -374,37 +382,16 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <p><a href="https://dev.mysql.com/doc/" target="_blank" rel="noopener">Home page</a><br><a href="https://dev.mysql.com/doc/refman/5.7/en/manual-conventions.html" target="_blank" rel="noopener">1.2 Typographical and Syntax Conventions</a></p>
-<h2 id="general-information"><a href="#general-information" class="headerlink" title="general information"></a>general information</h2><p>About pronunciation</p>
-<blockquote>
-<p>The official way to pronounce “MySQL” is “My Ess Que Ell” (not “my sequel”), but we do not mind if you pronounce it as “my sequel” or in some other localized way.</p>
-</blockquote>
-<p>Index limits:</p>
-<blockquote>
-<p>Support for up to 64 indexes per table. Each index may consist of 1 to 16 columns or parts of columns. The maximum index width for InnoDB tables is either 767 bytes or 3072 bytes. See Section 14.6.1.6, “Limits on InnoDB Tables”. The maximum index width for MyISAM tables is 1000 bytes. See Section 15.2, “The MyISAM Storage Engine”. An index may use a prefix of a column for CHAR, VARCHAR, BLOB, or TEXT column types.</p>
-</blockquote>
-<p>Sorting and comparisons are done according to the default character set and collation. is possible to change this when the MySQL server is started.</p>
-<p>The server time zone can be changed dynamically, and individual clients can specify their own time zone.</p>
-<p>MySQL now enables database administrators to establish a policy for automatic password expiration: Any user who connects to the server using an account for which the password is past its permitted lifetime must change the password. For more information, see Section 6.2.11, “Password Management”.</p>
-<p><strong>To make it easier to support secure connections, MySQL servers compiled using OpenSSL can automatically generate missing SSL and RSA certificate and key files at startup. See Section 6.3.3.1, “Creating SSL and RSA Certificates and Keys using MySQL”.</strong></p>
-<p>The installation process creates only a single root account, ‘root’@’localhost’, automatically generates a random password for this account, and marks the password expired. The MySQL administrator must connect as root using the random password and assign a new password. (The server writes the random password to the error log.)</p>
-<p>Installation creates no test database.</p>
-<p>ALTER TABLE now supports a RENAME INDEX clause that renames an index. The change is made in place without a table-copy operation. It works for all storage engines. </p>
-<p>ngram and MeCab full-text parser plugins.  MySQL provides a built-in full-text ngram parser plugin that supports Chinese, Japanese, and Korean (CJK), and an installable MeCab full-text parser plugin for Japanese.</p>
-<p>For more information, see Section 12.9.8, “ngram Full-Text Parser”, and Section 12.9.9, “MeCab Full-Text Parser Plugin”.</p>
-<p>Beginning with MySQL 5.7.8, MySQL supports a native JSON type. JSON values are not stored as strings, instead using an internal binary format that permits quick read access to document elements. JSON documents stored in JSON columns are automatically validated whenever they are inserted or updated, with an invalid document producing an error. JSON documents are normalized on creation, and can be compared using most comparison operators such as =, &lt;, &lt;=, &gt;, &gt;=, &lt;&gt;, !=, and &lt;=&gt;;</p>
-<p><strong>Deprecated:</strong><br>Create user and change user password</p>
-<h3 id="Interesting"><a href="#Interesting" class="headerlink" title="Interesting:"></a>Interesting:</h3><p>The Connector/ODBC (MyODBC) interface provides MySQL support for client programs that use ODBC (Open Database Connectivity) connections. For example, you can use MS Access to connect to your MySQL server. Clients can be run on Windows or Unix.</p>
-<p>The Connector/J interface provides MySQL support for Java client programs that use JDBC connections. Clients can be run on Windows or Unix. </p>
-<p>The server can provide error messages to clients in many languages. <strong>No Chinese</strong></p>
-<blockquote>
-<p>By default, mysqld produces error messages in English, but they can be displayed instead in any of several other languages: Czech, Danish, Dutch, Estonian, French, German, Greek, Hungarian, Italian, Japanese, Korean, Norwegian, Norwegian-ny, Polish, Portuguese, Romanian, Russian, Slovak, Spanish, or Swedish. </p>
-</blockquote>
-<p>MySQL includes several client and utility programs. These include both command-line programs such as mysqldump and mysqladmin, and graphical programs such as MySQL Workbench.</p>
-<p>MySQL Server has built-in support for SQL statements to check, optimize, and repair tables. These statements are available from the command line through the mysqlcheck client. MySQL also includes myisamchk, a very fast command-line utility for performing these operations on MyISAM tables. See Chapter 4, MySQL Programs.</p>
-<p>MySQL is named after co-founder Monty Widenius’s daughter, My.</p>
-<p>The name of the MySQL Dolphin (our logo) is “Sakila,” which was chosen from a huge list of names suggested by users in our “Name the Dolphin” contest. The winning name was submitted by Ambrose Twebaze, an Open Source software developer from Swaziland, Africa. According to Ambrose, the feminine name Sakila has its roots in SiSwati, the local language of Swaziland. Sakila is also the name of a town in Arusha, Tanzania, near Ambrose’s country of origin, Uganda.</p>
-
+          <p>MySQL 背景知识介绍</p>
+          <!--noindex-->
+          
+            <div class="post-button text-center">
+              <a class="btn" href="/2019/08/25/MySQL-5-7-官方文档学习纪要-1-介绍/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          
+          <!--/noindex-->
         
       
     </div>
@@ -931,6 +918,9 @@
 
       <div class="site-overview-wrap sidebar-panel">
         <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image"
+      src="/images/avatar.gif"
+      alt="Darcy">
   <p class="site-author-name" itemprop="name">Darcy</p>
   <div class="site-description" itemprop="description">我喝牛奶要加冰</div>
 </div>
@@ -1004,6 +994,25 @@
   <div class="theme-info">主题 – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> v7.4.0</div>
 
         
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-user"></i>
+    </span>
+    <span class="site-uv" title="总访客量">
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+    </span>
+  
+    <span class="post-meta-divider">|</span>
+  
+    <span class="post-meta-item-icon">
+      <i class="fa fa-eye"></i>
+    </span>
+    <span class="site-pv" title="总访问量">
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+    </span>
+  
+</div>
 
 
 
