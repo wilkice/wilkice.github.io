@@ -1,392 +1,415 @@
-/* global Stun, CONFIG */
+/* global NexT, CONFIG */
 
-Stun.utils = Stun.$u = {
+HTMLElement.prototype.outerHeight = function(flag) {
+  var height = this.offsetHeight;
+  if (!flag) return height;
+  var style = window.getComputedStyle(this);
+  height += parseInt(style.marginTop, 10) + parseInt(style.marginBottom, 10);
+  return height;
+};
+
+HTMLElement.prototype.wrap = function(wrapper) {
+  this.parentNode.insertBefore(wrapper, this);
+  this.parentNode.removeChild(this);
+  wrapper.appendChild(this);
+};
+
+NexT.utils = {
+
   /**
-   * Debounce
-   * @param {Object} func Callback function
-   * @param {Number} wait Waiting time
-   * @param {Boolean} immediate Run immediately
+   * Wrap images with fancybox.
    */
-  debounce: function (func, wait, immediate) {
-    var timeout;
-
-    return function () {
-      var context = this;
-      var args = arguments;
-
-      if (timeout) clearTimeout(timeout);
-      if (immediate) {
-        var callNow = !timeout;
-        timeout = setTimeout(function () {
-          timeout = null;
-        }, wait);
-        if (callNow) func.apply(context, args);
+  wrapImageWithFancyBox: function() {
+    document.querySelectorAll('.post-body :not(a) > img').forEach(element => {
+      var $image = $(element);
+      var imageLink = $image.attr('data-src') || $image.attr('src');
+      var $imageWrapLink = $image.wrap(`<a class="fancybox fancybox.image" href="${imageLink}" itemscope itemtype="http://schema.org/ImageObject" itemprop="url"></a>`).parent('a');
+      if ($image.is('.post-gallery img')) {
+        $imageWrapLink.addClass('post-gallery-img');
+        $imageWrapLink.attr('data-fancybox', 'gallery').attr('rel', 'gallery');
+      } else if ($image.is('.group-picture img')) {
+        $imageWrapLink.attr('data-fancybox', 'group').attr('rel', 'group');
       } else {
-        timeout = setTimeout(function () {
-          func.apply(context, args);
-        }, wait);
+        $imageWrapLink.attr('data-fancybox', 'default').attr('rel', 'default');
       }
-    };
-  },
-  /**
-   * Throttle
-   * @param {Object} func Callback function
-   * @param {Number} wait Waiting time
-   * @param {Object} options leading: Boolean, trailing: Boolean
-   */
-  throttle: function (func, wait, options) {
-    var timeout, context, args;
-    var previous = 0;
-    if (!options) options = {};
 
-    var later = function () {
-      previous = options.leading === false ? 0 : new Date().getTime();
-      timeout = null;
-      func.apply(context, args);
-      if (!timeout) context = args = null;
-    };
+      var imageTitle = $image.attr('title') || $image.attr('alt');
+      if (imageTitle) {
+        $imageWrapLink.append(`<p class="image-caption">${imageTitle}</p>`);
+        // Make sure img title tag will show correctly in fancybox
+        $imageWrapLink.attr('title', imageTitle).attr('data-caption', imageTitle);
+      }
+    });
 
-    var throttled = function () {
-      var now = new Date().getTime();
-      if (!previous && options.leading === false) previous = now;
-      var remaining = wait - (now - previous);
-      context = this;
-      args = arguments;
-      if (remaining <= 0 || remaining > wait) {
-        if (timeout) {
-          clearTimeout(timeout);
-          timeout = null;
+    $.fancybox.defaults.hash = false;
+    $('.fancybox').fancybox({
+      loop   : true,
+      helpers: {
+        overlay: {
+          locked: false
         }
-        previous = now;
-        func.apply(context, args);
-        if (!timeout) context = args = null;
-      } else if (!timeout && options.trailing !== false) {
-        timeout = setTimeout(later, remaining);
       }
-    };
-    return throttled;
-  },
-  /**
-   * Change the event code to keyCode.
-   * @param {String} code Event code
-   */
-  codeToKeyCode: function (code) {
-    var codes = {
-      ArrowLeft: 37,
-      ArrowRight: 39,
-      Escape: 27,
-      Enter: 13
-    };
-
-    return codes[code];
-  },
-  /**
-   * A UI component for notification prompts.
-   * @param {String} status The Status of message. Values: success / info / warning / error.
-   * @param {String} text The text to show.
-   * @param {Number} delay Message stay time (unit is 's', default 5s).
-   */
-  popAlert: function (status, text, delay) {
-    var icon = {
-      success: 'check-circle',
-      info: 'exclamation-circle',
-      warning: 'exclamation-circle',
-      error: 'times-circle'
-    };
-
-    if (!$('.stun-alert')[0]) {
-      var $alert = $(
-        '<div class="stun-message">' +
-          '<div class="stun-alert stun-alert-' + status + '">' +
-            '<i class="stun-alert-icon fa fa-' + icon[status] + '"></i>' +
-            '<span class="stun-alert-description">' + text + '</span>' +
-          '</div>' +
-        '</div>'
-      );
-
-      $('body').append($alert);
-    }
-
-    $(document).ready(function () {
-      $('.stun-alert')
-        .velocity('stop')
-        .velocity('transition.slideDownBigIn', {
-          duration: 300
-        })
-        .velocity('reverse', {
-          delay: delay * 1000 || 5000,
-          duration: 260,
-          complete: function () {
-            $('.stun-alert').css('display', 'none');
-          }
-        });
     });
   },
-  /**
-   * Copy any text.
-   * @param {HTMLElement} container Container of text.
-   */
-  copyText: function (container) {
-    try {
-      var selection = window.getSelection();
-      var range = document.createRange();
 
-      // Select text by the content of node.
-      range.selectNodeContents(container);
-      selection.removeAllRanges();
-      selection.addRange(range);
-
-      var text = selection.toString();
-      var input = document.createElement('input');
-
-      // Create a temporary input to make the
-      // execCommand command take effect.
-      input.style.display = 'none';
-      input.setAttribute('readonly', 'readonly');
-      input.setAttribute('value', text);
-      document.body.appendChild(input);
-      input.setSelectionRange(0, -1);
-
-      if (document.execCommand('copy')) {
-        document.execCommand('copy');
-        document.body.removeChild(input);
-
-        return true;
-      }
-      document.body.removeChild(input);
-    } catch (e) {
-      return false;
-    }
+  registerExtURL: function() {
+    document.querySelectorAll('.exturl').forEach(element => {
+      element.addEventListener('click', event => {
+        var exturl = event.currentTarget.getAttribute('data-url');
+        var decurl = decodeURIComponent(escape(window.atob(exturl)));
+        window.open(decurl, '_blank', 'noopener');
+        return false;
+      });
+    });
   },
-  // Wrap images with fancybox support.
-  wrapImageWithFancyBox: function () {
-    $('.content img').not(':hidden').each(function () {
-      var $img = $(this);
-      var imgTitle = $img.attr('title') || $img.attr('alt');
-      var $imgWrap = $img.parent('a');
 
-      if (!$imgWrap[0]) {
-        var imgSrc = $img.attr('data-original') || $img.attr('src');
-
-        $imgWrap = $img.wrap('<a class="fancybox" href="' + imgSrc +
-          '" itemscope itemtype="http://schema.org/ImageObject" itemprop="url"></a>'
-        ).parent('a');
-
-        if ($img.is('.gallery img')) {
-          $imgWrap.attr('data-fancybox', 'gallery');
+  /**
+   * One-click copy code support.
+   */
+  registerCopyCode: function() {
+    document.querySelectorAll('figure.highlight').forEach(e => {
+      const initButton = button => {
+        if (CONFIG.copycode.style === 'mac') {
+          button.innerHTML = '<i class="fa fa-clipboard"></i>';
         } else {
-          $imgWrap.attr('data-fancybox', 'default');
+          button.innerText = CONFIG.translation.copy_button;
+        }
+      };
+      const box = document.createElement('div');
+      box.classList.add('highlight-wrap');
+      e.wrap(box);
+      e.parentNode.insertAdjacentHTML('beforeend', '<div class="copy-btn"></div>');
+      var button = e.parentNode.querySelector('.copy-btn');
+      button.addEventListener('click', event => {
+        var target = event.currentTarget;
+        var code = [...target.parentNode.querySelectorAll('.code .line')].map(element => {
+          return element.innerText;
+        }).join('\n');
+        var ta = document.createElement('textarea');
+        var yPosition = window.scrollY;
+        ta.style.top = yPosition + 'px'; // Prevent page scrolling
+        ta.style.position = 'absolute';
+        ta.style.opacity = '0';
+        ta.readOnly = true;
+        ta.value = code;
+        document.body.append(ta);
+        const selection = document.getSelection();
+        const selected = selection.rangeCount > 0 ? selection.getRangeAt(0) : false;
+        ta.select();
+        ta.setSelectionRange(0, code.length);
+        ta.readOnly = false;
+        var result = document.execCommand('copy');
+        if (CONFIG.copycode.show_result) {
+          target.innerText = result ? CONFIG.translation.copy_success : CONFIG.translation.copy_failure;
+        }
+        ta.blur(); // For iOS
+        target.blur();
+        if (selected) {
+          selection.removeAllRanges();
+          selection.addRange(selected);
+        }
+        document.body.removeChild(ta);
+      });
+      button.addEventListener('mouseleave', event => {
+        setTimeout(() => {
+          initButton(event.target);
+        }, 300);
+      });
+      initButton(button);
+    });
+  },
+
+  wrapTableWithBox: function() {
+    document.querySelectorAll('table').forEach(table => {
+      const box = document.createElement('div');
+      box.className = 'table-container';
+      table.wrap(box);
+    });
+  },
+
+  registerVideoIframe: function() {
+    document.querySelectorAll('iframe').forEach(element => {
+      const SUPPORTED_PLAYERS = [
+        'www.youtube.com',
+        'player.vimeo.com',
+        'player.youku.com',
+        'player.bilibili.com',
+        'www.tudou.com'
+      ];
+      const pattern = new RegExp(SUPPORTED_PLAYERS.join('|'));
+      if (!element.parentNode.matches('.video-container') && element.src.search(pattern) > 0) {
+        const box = document.createElement('div');
+        box.className = 'video-container';
+        element.wrap(box);
+        let width = Number(element.width); let height = Number(element.height);
+        if (width && height) {
+          element.parentNode.style.paddingTop = (height / width * 100) + '%';
         }
       }
+    });
+  },
 
-      if (imgTitle) {
-        $imgWrap.attr('title', imgTitle).attr('data-caption', imgTitle);
+  registerScrollPercent: function() {
+    var THRESHOLD = 50;
+    var backToTop = document.querySelector('.back-to-top');
+    var readingProgressBar = document.querySelector('.reading-progress-bar');
+    // For init back to top in sidebar if page was scrolled after page refresh.
+    window.addEventListener('scroll', () => {
+      var scrollPercent;
+      if (backToTop || readingProgressBar) {
+        var docHeight = document.querySelector('.container').offsetHeight;
+        var winHeight = window.innerHeight;
+        var contentVisibilityHeight = docHeight > winHeight ? docHeight - winHeight : document.body.scrollHeight - winHeight;
+        var scrollPercentRounded = Math.round(100 * window.scrollY / contentVisibilityHeight);
+        scrollPercent = Math.min(scrollPercentRounded, 100) + '%';
+      }
+      if (backToTop) {
+        window.scrollY > THRESHOLD ? backToTop.classList.add('back-to-top-on') : backToTop.classList.remove('back-to-top-on');
+        backToTop.querySelector('span').innerText = scrollPercent;
+      }
+      if (readingProgressBar) {
+        readingProgressBar.style.width = scrollPercent;
       }
     });
 
-    $().fancybox({
-      selector: '[data-fancybox]',
-      loop: true,
-      transitionEffect: 'slide',
-      buttons: [
-        'share',
-        'slideShow',
-        'fullScreen',
-        'download',
-        'thumbs',
-        'close'
-      ]
-    });
-  },
-  // Display the image in the gallery as a waterfall.
-  galleryWaterFall: function () {
-    var gConfig = CONFIG.gallery_waterfall;
-    var colWidth = parseInt(gConfig.col_width);
-    var colGapX = parseInt(gConfig.gap_x);
-
-    this.waitAllImageLoad('.gallery img', function () {
-      $('.gallery').masonry({
-        itemSelector: '.gallery-image',
-        columnWidth: colWidth,
-        percentPosition: true,
-        gutter: colGapX,
-        transitionDuration: 0
+    backToTop && backToTop.addEventListener('click', () => {
+      window.anime({
+        targets  : document.documentElement,
+        duration : 500,
+        easing   : 'linear',
+        scrollTop: 0
       });
     });
   },
-  // Lazy load the images of post.
-  lazyLoadImages: function () {
-    $('img.lazyload').lazyload();
-  },
-  // Add a mark icon to the link with `target="_blank"` attribute.
-  addIconToExternalLink: function (container) {
-    if (!$(container)[0]) return;
 
-    var $wrapper = $('<span class="external-link"></span>');
-    var $icon = $(
-      '<i class="fa fa-' +
-        CONFIG.external_link.icon.name +
-      '"></i>'
-    );
-
-    $(container)
-      .find('a[target="_blank"]')
-      .wrap($wrapper)
-      .parent('.external-link')
-      .append($icon);
-  },
-  // Back the page to top.
-  back2top: function () {
-    function back2topHandler () {
-      var $top = $('#back-top');
-      var scrollTop = $(window).scrollTop();
-
-      if (scrollTop !== 0) {
-        $top.css('visibility', 'visible');
-      } else {
-        $top.css('visibility', 'hidden');
-      }
-    }
-
-    $(window).on('load', back2topHandler);
-    $(window).on('scroll', back2topHandler);
-
-    $('#back-top').on('click', function () {
-      $('body').velocity('stop').velocity('scroll');
-
-      if (CONFIG.back2top.animation) {
-        $('#back-top')
-          .velocity({ translateY: '-100vh' }, { duration: 500 })
-          .velocity('reverse', { duration: 10 });
-      }
-    });
-  },
-  // Switch to the prev / next post by shortcuts.
-  registerSwitchPost: function () {
-    var _this = this;
-
-    $(document).on('keydown', function (e) {
-      var isPrev = e.keyCode === _this.codeToKeyCode('ArrowLeft');
-      var isNext = e.keyCode === _this.codeToKeyCode('ArrowRight');
-
-      if (e.ctrlKey && isPrev) {
-        var prev = $('.article-prev').find('a')[0];
-        prev && prev.click();
-      } else if (e.ctrlKey && isNext) {
-        var next = $('.article-next').find('a')[0];
-        next && next.click();
-      }
-    });
-  },
-  // Show / Hide the reward QR.
-  registerShowReward: function () {
-    $('.reward-button').on('click', function () {
-      var $container = $('.reward-qr-wrapper');
-
-      if ($container.is(':visible')) {
-        $container.css('display', 'none');
-      } else {
-        $container
-          .velocity('stop')
-          .velocity('transition.slideDownBigIn', {
-            duration: 300
-          });
-      }
-    });
-  },
-  // Click to zoom in image, without fancybox.
-  registerClickToZoomImage: function () {
-    $('.content img').not(':hidden').each(function () {
-      $(this).addClass('zoom-image');
-    });
-
-    var $newImgMask = $('<div class="zoom-image-mask"></div>');
-    var $newImg = $('<img>');
-    var isZoom = false;
-
-    $(window).on('scroll', function () {
-      if (isZoom) {
-        isZoom = false;
-        setTimeout(closeZoom, 200);
-      }
-    });
-
-    $(document).on('click', function () {
-      closeZoom();
-    });
-
-    $('.zoom-image').on('click', function (e) {
-      e.stopPropagation();
-      isZoom = true;
-
-      var imgRect = this.getBoundingClientRect();
-      var imgW = $(this).width();
-      var imgH = $(this).height();
-      var imgOuterW = $(this).outerWidth();
-      var imgOuterH = $(this).outerHeight();
-      var winW = $(window).width();
-      var winH = $(window).height();
-      var scaleX = winW / imgW;
-      var scaleY = winH / imgH;
-      var scale = (scaleX < scaleY ? scaleX : scaleY) || 1;
-      var translateX = winW / 2 - (imgRect.x + imgOuterW / 2);
-      var translateY = winH / 2 - (imgRect.y + imgOuterH / 2);
-
-      $newImg.attr('class', this.className);
-      $newImg.attr('src', this.src);
-      $newImg.addClass('show');
-      $newImg.css({
-        left: $(this).offset().left + (imgOuterW - imgW) / 2,
-        top: $(this).offset().top + (imgOuterH - imgH) / 2,
-        width: imgW,
-        height: imgH
-      });
-
-      $(this).addClass('hide');
-      $('body').append($newImgMask).append($newImg);
-      $newImgMask.velocity({ opacity: 1 });
-      $newImg.velocity({
-        translateX: translateX,
-        translateY: translateY,
-        scale: scale
-      }, {
-        duration: 300,
-        easing: [0.2, 0, 0.2, 1]
-      });
-    });
-
-    function closeZoom () {
-      $newImg.velocity('reverse');
-      $newImgMask.velocity('reverse', {
-        complete: function () {
-          $('.zoom-image.show').remove();
-          $('.zoom-image-mask').remove();
-          $('.zoom-image').removeClass('hide');
-        }
-      });
-    }
-  },
   /**
-   * Wait for all images to load.
-   * @param {String} selector jQuery selector.
-   * @param {Function} callback Callback.
+   * Tabs tag listener (without twitter bootstrap).
    */
-  waitAllImageLoad: function (selector, callback) {
-    var imgDefereds = [];
-
-    $(selector).each(function () {
-      var dfd = $.Deferred();
-      $(this).bind('load', function () {
-        dfd.resolve();
+  registerTabsTag: function() {
+    // Binding `nav-tabs` & `tab-content` by real time permalink changing.
+    document.querySelectorAll('.tabs ul.nav-tabs .tab').forEach(tab => {
+      tab.addEventListener('click', event => {
+        event.preventDefault();
+        var target = event.currentTarget;
+        // Prevent selected tab to select again.
+        if (!target.classList.contains('active')) {
+          // Add & Remove active class on `nav-tabs` & `tab-content`.
+          [...target.parentNode.children].forEach(item => {
+            item.classList.remove('active');
+          });
+          target.classList.add('active');
+          var tActive = document.getElementById(target.querySelector('a').getAttribute('href').replace('#', ''));
+          [...tActive.parentNode.children].forEach(item => {
+            item.classList.remove('active');
+          });
+          tActive.classList.add('active');
+          // Trigger event
+          tActive.dispatchEvent(new Event('tabs:click', {
+            bubbles: true
+          }));
+        }
       });
-
-      if (this.complete) {
-        setTimeout(function () {
-          dfd.resolve();
-        }, 500);
-      }
-      imgDefereds.push(dfd);
     });
-    $.when.apply(null, imgDefereds).then(callback);
+
+    window.dispatchEvent(new Event('tabs:register'));
+  },
+
+  registerCanIUseTag: function() {
+    // Get responsive height passed from iframe.
+    window.addEventListener('message', e => {
+      var data = e.data;
+      if ((typeof data === 'string') && (data.indexOf('ciu_embed') > -1)) {
+        var featureID = data.split(':')[1];
+        var height = data.split(':')[2];
+        document.querySelector(`iframe[data-feature=${featureID}]`).style.height = parseInt(height, 10) + 'px';
+      }
+    }, false);
+  },
+
+  registerActiveMenuItem: function() {
+    document.querySelectorAll('.menu-item').forEach(element => {
+      var target = element.querySelector('a[href]');
+      if (!target) return;
+      var isSamePath = target.pathname === location.pathname || target.pathname === location.pathname.replace('index.html', '');
+      var isSubPath = target.pathname !== CONFIG.root && location.pathname.indexOf(target.pathname) === 0;
+      if (target.hostname === location.hostname && (isSamePath || isSubPath)) {
+        element.classList.add('menu-item-active');
+      } else {
+        element.classList.remove('menu-item-active');
+      }
+    });
+  },
+
+  registerSidebarTOC: function() {
+    const navItems = document.querySelectorAll('.post-toc li');
+    const sections = [...navItems].map(element => {
+      var link = element.querySelector('a.nav-link');
+      // TOC item animation navigate.
+      link.addEventListener('click', event => {
+        event.preventDefault();
+        var target = document.getElementById(event.currentTarget.getAttribute('href').replace('#', ''));
+        var offset = target.getBoundingClientRect().top + window.scrollY;
+        window.anime({
+          targets  : document.documentElement,
+          duration : 500,
+          easing   : 'linear',
+          scrollTop: offset + 10
+        });
+      });
+      return document.getElementById(link.getAttribute('href').replace('#', ''));
+    });
+
+    var tocElement = document.querySelector('.post-toc-wrap');
+    function activateNavByIndex(target) {
+      if (target.classList.contains('active-current')) return;
+
+      document.querySelectorAll('.post-toc .active').forEach(element => {
+        element.classList.remove('active', 'active-current');
+      });
+      target.classList.add('active', 'active-current');
+      var parent = target.parentNode;
+      while (!parent.matches('.post-toc')) {
+        if (parent.matches('li')) parent.classList.add('active');
+        parent = parent.parentNode;
+      }
+      // Scrolling to center active TOC element if TOC content is taller then viewport.
+      window.anime({
+        targets  : tocElement,
+        duration : 200,
+        easing   : 'linear',
+        scrollTop: tocElement.scrollTop - (tocElement.offsetHeight / 2) + target.getBoundingClientRect().top - tocElement.getBoundingClientRect().top
+      });
+    }
+
+    function findIndex(entries) {
+      let index = 0;
+      let entry = entries[index];
+      if (entry.boundingClientRect.top > 0) {
+        index = sections.indexOf(entry.target);
+        return index === 0 ? 0 : index - 1;
+      }
+      for (;index < entries.length; index++) {
+        if (entries[index].boundingClientRect.top <= 0) {
+          entry = entries[index];
+        } else {
+          return sections.indexOf(entry.target);
+        }
+      }
+      return sections.indexOf(entry.target);
+    }
+
+    function createIntersectionObserver(marginTop) {
+      marginTop = Math.floor(marginTop + 10000);
+      let intersectionObserver = new IntersectionObserver((entries, observe) => {
+        let scrollHeight = document.documentElement.scrollHeight + 100;
+        if (scrollHeight > marginTop) {
+          observe.disconnect();
+          createIntersectionObserver(scrollHeight);
+          return;
+        }
+        let index = findIndex(entries);
+        activateNavByIndex(navItems[index]);
+      }, {
+        rootMargin: marginTop + 'px 0px -100% 0px',
+        threshold : 0
+      });
+      sections.forEach(item => intersectionObserver.observe(item));
+    }
+    createIntersectionObserver(document.documentElement.scrollHeight);
+  },
+
+  hasMobileUA: function() {
+    var ua = navigator.userAgent;
+    var pa = /iPad|iPhone|Android|Opera Mini|BlackBerry|webOS|UCWEB|Blazer|PSP|IEMobile|Symbian/g;
+
+    return pa.test(ua);
+  },
+
+  isTablet: function() {
+    return window.screen.width < 992 && window.screen.width > 767 && this.hasMobileUA();
+  },
+
+  isMobile: function() {
+    return window.screen.width < 767 && this.hasMobileUA();
+  },
+
+  isDesktop: function() {
+    return !this.isTablet() && !this.isMobile();
+  },
+
+  isMuse: function() {
+    return CONFIG.scheme === 'Muse';
+  },
+
+  isMist: function() {
+    return CONFIG.scheme === 'Mist';
+  },
+
+  isPisces: function() {
+    return CONFIG.scheme === 'Pisces';
+  },
+
+  isGemini: function() {
+    return CONFIG.scheme === 'Gemini';
+  },
+
+  /**
+   * Init Sidebar & TOC inner dimensions on all pages and for all schemes.
+   * Need for Sidebar/TOC inner scrolling if content taller then viewport.
+   */
+  initSidebarDimension: function() {
+    var sidebarNav = document.querySelector('.sidebar-nav');
+    var sidebarNavHeight = sidebarNav.style.display !== 'none' ? sidebarNav.outerHeight(true) : 0;
+    var sidebarOffset = CONFIG.sidebar.offset || 12;
+    var sidebarb2tHeight = CONFIG.back2top.enable && CONFIG.back2top.sidebar ? document.querySelector('.back-to-top').offsetHeight : 0;
+    var sidebarSchemePadding = CONFIG.sidebarPadding + sidebarNavHeight + sidebarb2tHeight;
+    // Margin of sidebar b2t: 8px -10px -20px, brings a different of 12px.
+    if (NexT.utils.isPisces() || NexT.utils.isGemini()) sidebarSchemePadding += (sidebarOffset * 2) - 12;
+    // Initialize Sidebar & TOC Height.
+    var sidebarWrapperHeight = document.body.offsetHeight - sidebarSchemePadding + 'px';
+    document.querySelector('.site-overview-wrap').style.maxHeight = sidebarWrapperHeight;
+    document.querySelector('.post-toc-wrap').style.maxHeight = sidebarWrapperHeight;
+  },
+
+  updateSidebarPosition: function() {
+    var sidebarNav = document.querySelector('.sidebar-nav');
+    var hasTOC = document.querySelector('.post-toc');
+    if (hasTOC) {
+      sidebarNav.style.display = '';
+      sidebarNav.classList.add('motion-element');
+      document.querySelector('.sidebar-nav-toc').click();
+    } else {
+      sidebarNav.style.display = 'none';
+      sidebarNav.classList.remove('motion-element');
+      document.querySelector('.sidebar-nav-overview').click();
+    }
+    NexT.utils.initSidebarDimension();
+    if (!this.isDesktop() || this.isPisces() || this.isGemini()) return;
+    // Expand sidebar on post detail page by default, when post has a toc.
+    var display = CONFIG.page.sidebar;
+    if (typeof display !== 'boolean') {
+      // There's no definition sidebar in the page front-matter.
+      display = CONFIG.sidebar.display === 'always' || (CONFIG.sidebar.display === 'post' && hasTOC);
+    }
+    if (display) {
+      window.dispatchEvent(new Event('sidebar:show'));
+    }
+  },
+
+  getScript: function(url, callback, condition) {
+    if (condition) {
+      callback();
+    } else {
+      var script = document.createElement('script');
+      script.onload = script.onreadystatechange = function(_, isAbort) {
+        if (isAbort || !script.readyState || /loaded|complete/.test(script.readyState)) {
+          script.onload = script.onreadystatechange = null;
+          script = undefined;
+          if (!isAbort && callback) setTimeout(callback, 0);
+        }
+      };
+      script.src = url;
+      document.head.appendChild(script);
+    }
   }
 };
