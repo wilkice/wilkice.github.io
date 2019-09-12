@@ -196,7 +196,7 @@
       
     
 
-    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档<span class="badge">29</span></a>
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档<span class="badge">25</span></a>
 
   </li>
       
@@ -309,9 +309,9 @@
 <a id="more"></a>
 
 <hr>
-<h2 id="User-configuration"><a href="#User-configuration" class="headerlink" title="User configuration"></a>User configuration</h2><h3 id="on-server"><a href="#on-server" class="headerlink" title="on server"></a>on server</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> adduser darcy</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> usermod -aG sudo darcy</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> su - darcy</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> vi ~/.ssh/config  <span class="comment"># set PubkeyAuthentication yes</span></span></span><br></pre></td></tr></table></figure>
+<h2 id="User-configuration"><a href="#User-configuration" class="headerlink" title="User configuration"></a>User configuration</h2><h3 id="on-server"><a href="#on-server" class="headerlink" title="on server"></a>on server</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span> adduser darcy</span><br><span class="line"><span class="meta">$</span> usermod -aG sudo darcy</span><br><span class="line"><span class="meta">$</span> su - darcy</span><br><span class="line"><span class="meta">$</span> vi ~/.ssh/config  # set PubkeyAuthentication yes</span><br></pre></td></tr></table></figure>
 
-<h3 id="on-client"><a href="#on-client" class="headerlink" title="on client"></a>on client</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> ssh-keygen -t rsa -b 2048</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> ssh-copy-id darcy@host</span></span><br></pre></td></tr></table></figure>
+<h3 id="on-client"><a href="#on-client" class="headerlink" title="on client"></a>on client</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span> ssh-keygen -t rsa -b 2048</span><br><span class="line"><span class="meta">$</span> ssh-copy-id darcy@host</span><br></pre></td></tr></table></figure>
 
 <h2 id="Install-conda-env"><a href="#Install-conda-env" class="headerlink" title="Install conda env"></a>Install conda env</h2><blockquote>
 <p>Download page: <a href="https://docs.conda.io/en/latest/miniconda.html" target="_blank" rel="noopener">https://docs.conda.io/en/latest/miniconda.html</a></p>
@@ -320,11 +320,11 @@
 <ol>
 <li>Create env</li>
 </ol>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> need to specify python version, otherwise vs code won<span class="string">'t work</span></span></span><br><span class="line"><span class="meta">$</span><span class="bash"> conda create -n pytorch python=3.7</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span> need to specify python version, otherwise vs code won't work</span><br><span class="line"><span class="meta">$</span> conda create -n pytorch python=3.7</span><br></pre></td></tr></table></figure>
 
 <ol start="2">
 <li><p>Create env from <code>yml</code> file</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> conda env create -f environment.yml</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span> conda env create -f environment.yml</span><br></pre></td></tr></table></figure>
 
 </li>
 </ol>
@@ -353,8 +353,8 @@
           <div class="post-nav">
             <div class="post-nav-next post-nav-item">
               
-                <a href="/2019/06/06/data-mining/" rel="next" title="Data mining">
-                  <i class="fa fa-chevron-left"></i> Data mining
+                <a href="/2019/06/06/must-read-books/" rel="next" title="Must read books for programer">
+                  <i class="fa fa-chevron-left"></i> Must read books for programer
                 </a>
               
             </div>
@@ -432,7 +432,7 @@
         
           <a href="/archives/">
         
-          <span class="site-state-item-count">29</span>
+          <span class="site-state-item-count">25</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
