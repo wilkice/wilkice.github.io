@@ -17,7 +17,6 @@ NexT.utils = {
       var imageLink = $image.attr('data-src') || $image.attr('src');
       var $imageWrapLink = $image.wrap(`<a class="fancybox fancybox.image" href="${imageLink}" itemscope itemtype="http://schema.org/ImageObject" itemprop="url"></a>`).parent('a');
       if ($image.is('.post-gallery img')) {
-        $imageWrapLink.addClass('post-gallery-img');
         $imageWrapLink.attr('data-fancybox', 'gallery').attr('rel', 'gallery');
       } else if ($image.is('.group-picture img')) {
         $imageWrapLink.attr('data-fancybox', 'group').attr('rel', 'group');
@@ -60,17 +59,10 @@ NexT.utils = {
    */
   registerCopyCode: function() {
     document.querySelectorAll('figure.highlight').forEach(element => {
-      const initButton = button => {
-        if (CONFIG.copycode.style === 'mac') {
-          button.innerHTML = '<i class="fa fa-clipboard"></i>';
-        } else {
-          button.innerText = CONFIG.translation.copy_button;
-        }
-      };
       const box = document.createElement('div');
-      box.classList.add('highlight-wrap');
       element.wrap(box);
-      element.parentNode.insertAdjacentHTML('beforeend', '<div class="copy-btn"></div>');
+      box.classList.add('highlight-container');
+      box.insertAdjacentHTML('beforeend', '<div class="copy-btn"><i class="fa fa-clipboard"></i></div>');
       var button = element.parentNode.querySelector('.copy-btn');
       button.addEventListener('click', event => {
         var target = event.currentTarget;
@@ -78,8 +70,7 @@ NexT.utils = {
           return line.innerText;
         }).join('\n');
         var ta = document.createElement('textarea');
-        var yPosition = window.scrollY;
-        ta.style.top = yPosition + 'px'; // Prevent page scrolling
+        ta.style.top = window.scrollY + 'px'; // Prevent page scrolling
         ta.style.position = 'absolute';
         ta.style.opacity = '0';
         ta.readOnly = true;
@@ -92,7 +83,7 @@ NexT.utils = {
         ta.readOnly = false;
         var result = document.execCommand('copy');
         if (CONFIG.copycode.show_result) {
-          target.innerText = result ? CONFIG.translation.copy_success : CONFIG.translation.copy_failure;
+          target.querySelector('i').className = result ? 'fa fa-check' : 'fa fa-times';
         }
         ta.blur(); // For iOS
         target.blur();
@@ -104,10 +95,9 @@ NexT.utils = {
       });
       button.addEventListener('mouseleave', event => {
         setTimeout(() => {
-          initButton(event.target);
+          event.target.querySelector('i').className = 'fa fa-clipboard';
         }, 300);
       });
-      initButton(button);
     });
   },
 
@@ -166,7 +156,7 @@ NexT.utils = {
 
     backToTop && backToTop.addEventListener('click', () => {
       window.anime({
-        targets  : [document.documentElement, document.body],
+        targets  : document.scrollingElement,
         duration : 500,
         easing   : 'linear',
         scrollTop: 0
@@ -238,7 +228,7 @@ NexT.utils = {
         var target = document.getElementById(event.currentTarget.getAttribute('href').replace('#', ''));
         var offset = target.getBoundingClientRect().top + window.scrollY;
         window.anime({
-          targets  : [document.documentElement, document.body],
+          targets  : document.scrollingElement,
           duration : 500,
           easing   : 'linear',
           scrollTop: offset + 10
@@ -311,7 +301,6 @@ NexT.utils = {
   hasMobileUA: function() {
     var ua = navigator.userAgent;
     var pa = /iPad|iPhone|Android|Opera Mini|BlackBerry|webOS|UCWEB|Blazer|PSP|IEMobile|Symbian/g;
-
     return pa.test(ua);
   },
 
@@ -327,22 +316,6 @@ NexT.utils = {
     return !this.isTablet() && !this.isMobile();
   },
 
-  isMuse: function() {
-    return CONFIG.scheme === 'Muse';
-  },
-
-  isMist: function() {
-    return CONFIG.scheme === 'Mist';
-  },
-
-  isPisces: function() {
-    return CONFIG.scheme === 'Pisces';
-  },
-
-  isGemini: function() {
-    return CONFIG.scheme === 'Gemini';
-  },
-
   /**
    * Init Sidebar & TOC inner dimensions on all pages and for all schemes.
    * Need for Sidebar/TOC inner scrolling if content taller then viewport.
@@ -352,9 +325,9 @@ NexT.utils = {
     var sidebarNavHeight = sidebarNav.style.display !== 'none' ? sidebarNav.offsetHeight : 0;
     var sidebarOffset = CONFIG.sidebar.offset || 12;
     var sidebarb2tHeight = CONFIG.back2top.enable && CONFIG.back2top.sidebar ? document.querySelector('.back-to-top').offsetHeight : 0;
-    var sidebarSchemePadding = CONFIG.sidebarPadding + sidebarNavHeight + sidebarb2tHeight;
+    var sidebarSchemePadding = (CONFIG.sidebar.padding * 2) + sidebarNavHeight + sidebarb2tHeight;
     // Margin of sidebar b2t: 8px -10px -20px, brings a different of 12px.
-    if (NexT.utils.isPisces() || NexT.utils.isGemini()) sidebarSchemePadding += (sidebarOffset * 2) - 12;
+    if (CONFIG.scheme === 'Pisces' || CONFIG.scheme === 'Gemini') sidebarSchemePadding += (sidebarOffset * 2) - 12;
     // Initialize Sidebar & TOC Height.
     var sidebarWrapperHeight = document.body.offsetHeight - sidebarSchemePadding + 'px';
     document.querySelector('.site-overview-wrap').style.maxHeight = sidebarWrapperHeight;
@@ -374,7 +347,7 @@ NexT.utils = {
       document.querySelector('.sidebar-nav-overview').click();
     }
     NexT.utils.initSidebarDimension();
-    if (!this.isDesktop() || this.isPisces() || this.isGemini()) return;
+    if (!this.isDesktop() || CONFIG.scheme === 'Pisces' || CONFIG.scheme === 'Gemini') return;
     // Expand sidebar on post detail page by default, when post has a toc.
     var display = CONFIG.page.sidebar;
     if (typeof display !== 'boolean') {
@@ -401,5 +374,21 @@ NexT.utils = {
       script.src = url;
       document.head.appendChild(script);
     }
+  },
+
+  loadComments: function(element, callback) {
+    if (!CONFIG.comments.lazyload) {
+      callback();
+      return;
+    }
+    let intersectionObserver = new IntersectionObserver((entries, observer) => {
+      let entry = entries[0];
+      if (entry.isIntersecting) {
+        callback();
+        observer.disconnect();
+      }
+    });
+    intersectionObserver.observe(element);
+    return intersectionObserver;
   }
 };
