@@ -266,7 +266,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2020/03/03/ssh-port-forward/" class="post-title-link" itemprop="url">SSH 相关</a>
+            <a href="/2020/03/03/ssh-port-forward/" class="post-title-link" itemprop="url">SSH settings</a>
         </h2>
 
         <div class="post-meta">
@@ -283,7 +283,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-04-22 17:38:52" itemprop="dateModified" datetime="2020-04-22T17:38:52+08:00">2020-04-22</time>
+                <time title="修改时间：2020-04-22 17:57:10" itemprop="dateModified" datetime="2020-04-22T17:57:10+08:00">2020-04-22</time>
               </span>
 
           
@@ -462,7 +462,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://wilkice.github.io/2019/07/29/ssh/">
+    <link itemprop="mainEntityOfPage" href="https://wilkice.github.io/2019/07/29/ssh_settings/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -476,7 +476,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2019/07/29/ssh/" class="post-title-link" itemprop="url">SSH </a>
+            <a href="/2019/07/29/ssh_settings/" class="post-title-link" itemprop="url">SSH Settings</a>
         </h2>
 
         <div class="post-meta">
@@ -493,7 +493,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-04-22 16:52:49" itemprop="dateModified" datetime="2020-04-22T16:52:49+08:00">2020-04-22</time>
+                <time title="修改时间：2020-04-22 18:04:02" itemprop="dateModified" datetime="2020-04-22T18:04:02+08:00">2020-04-22</time>
               </span>
 
           
@@ -507,31 +507,15 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <ol>
-<li><p>在客户端生成密钥对</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh-keygen -t rsa -b 2048</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>将客户端 <code>~/.ssh/id_rsa.pub</code> 文件的内容追加到服务器 <code>~/.ssh/authorized_keys</code></p>
-</li>
-</ol>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh-copy-id -i ~/.ssh/id_rsa.pub user@host</span><br></pre></td></tr></table></figure>
-
-<ol start="4">
-<li>修改服务器用户文件<code>authorized_keys</code> 权限600, <code>.ssh</code> 文件夹权限700</li>
-<li>修改服务器 <code>/etc/ssh/sshd_config</code> 中的 <code>PubkeyAuthentication</code> 为 <code>yes</code></li>
-<li>重启 <strong>sshd</strong>服务</li>
-</ol>
-<p><strong>centos</strong></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">systemctl restart sshd.service</span><br></pre></td></tr></table></figure>
-
-<p><strong>Ubuntu</strong></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">service sshd restart</span><br></pre></td></tr></table></figure>
-
-<p>For Vs code:</p>
-<blockquote>
-<p>identify file is private key not pub</p>
-</blockquote>
-
+          <p>Some common settings of SSH</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2019/07/29/ssh_settings/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
       
     </div>
 
