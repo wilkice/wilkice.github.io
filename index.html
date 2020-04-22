@@ -266,7 +266,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2020/03/03/ssh-port-forward/" class="post-title-link" itemprop="url">ssh_port_forward</a>
+            <a href="/2020/03/03/ssh-port-forward/" class="post-title-link" itemprop="url">SSH 相关</a>
         </h2>
 
         <div class="post-meta">
@@ -278,6 +278,13 @@
 
               <time title="创建时间：2020-03-03 15:15:58" itemprop="dateCreated datePublished" datetime="2020-03-03T15:15:58+08:00">2020-03-03</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-04-22 17:38:52" itemprop="dateModified" datetime="2020-04-22T17:38:52+08:00">2020-04-22</time>
+              </span>
 
           
 
@@ -290,21 +297,15 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h2 id="SSH-远端端口转发"><a href="#SSH-远端端口转发" class="headerlink" title="SSH 远端端口转发"></a>SSH 远端端口转发</h2><p>场景：</p>
-<p>在家里的电脑 A（无外网 IP）上搭建好了一个服务，想展示给其他人查看。</p>
-<p>前提：</p>
-<p>具有一台「有外网地址的」的主机 B，地址为：123.123.123.123，用户为 root，密码为 123456，SSH 端口为 22。</p>
-<h3 id="操作流程"><a href="#操作流程" class="headerlink" title="操作流程"></a>操作流程</h3><p>在 A 主机操作：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">A $ ssh -R 8888:localhost:9999 root@123.123.123.123 -p 22</span><br></pre></td></tr></table></figure>
-
-<p>输入此命令后对 B主机（123.123.123.123） 的 8888 端口的访问会全部转发到 A 主机的 9999 端口。</p>
-<p>⚠️</p>
-<ol>
-<li>B 主机的 8888 端口需要在防火墙打开</li>
-<li>以上命令只会导致 B 主机监听 127.0.0.1:8888，因此外部对 B 主机 8888 端口的访问不会被转发。要实现外部也可访问的效果，需要将 B 主机 <code>/etc/ssh/sshd_config</code> 中的 <code>GatewayPorts no</code> 改为 <code>GatewayPorts yes</code> </li>
-<li>如果要实现在后台保持连接，可添加 <code>-fN</code> 参数，一般加上 <code>-N</code> 即可</li>
-</ol>
-
+          <p>SSH 设置 + 日常使用命令 + 转发</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2020/03/03/ssh-port-forward/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
       
     </div>
 
