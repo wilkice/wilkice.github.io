@@ -194,7 +194,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2020/04/19/guide_to_firewall/" class="post-title-link" itemprop="url">basic to firewall</a>
+            <a href="/2020/04/19/guide_to_firewall/" class="post-title-link" itemprop="url">Firewall basics</a>
         </h2>
 
         <div class="post-meta">
@@ -211,7 +211,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-04-20 15:07:12" itemprop="dateModified" datetime="2020-04-20T15:07:12+08:00">2020-04-20</time>
+                <time title="修改时间：2020-04-22 17:14:40" itemprop="dateModified" datetime="2020-04-22T17:14:40+08:00">2020-04-22</time>
               </span>
 
           
@@ -225,63 +225,15 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h2 id="Basic-knowledge"><a href="#Basic-knowledge" class="headerlink" title="Basic knowledge"></a>Basic knowledge</h2><p>The firewalld daemon manages groups of rules using entities called “zones”.</p>
-<p>Network interfaces are assigned a zone to dictate the behavior that the firewall should allow.</p>
-<p>To use the firewall, we can create rules and alter the properties of our zones and then assign our network interfaces to whichever zones are most appropriate.</p>
-<p>In firewalld, rules can be designated as either permanent or immediate. If a rule is added or modified, by default, the behavior of the currently running firewall is modified. At the next boot, the old rules will be reverted.</p>
-<h2 id="settings"><a href="#settings" class="headerlink" title="settings"></a>settings</h2><p>auto start firewall after reboot</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">systemctl <span class="built_in">enable</span> firewalld</span><br></pre></td></tr></table></figure>
-
-<p>show status</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">firewall-cmd --state</span><br></pre></td></tr></table></figure>
-
-<h2 id="zones"><a href="#zones" class="headerlink" title="zones"></a>zones</h2><p>show all zone names</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">firewall-cmd --get-zones</span><br></pre></td></tr></table></figure>
-
-<p>show default zones</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">firewall-cmd --get-default-zone</span><br></pre></td></tr></table></figure>
-
-<p>show active zones</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">firewall-cmd --get-active-zones</span><br></pre></td></tr></table></figure>
-
-<p>show zone info</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">firewall-cmd [--zone=home] --list-all</span><br></pre></td></tr></table></figure>
-
-<p>show all zone info</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">firewall-cmd --list-all-zones | less</span><br></pre></td></tr></table></figure>
-
-<p>change network interface bind zone</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">firewall-cmd --zone=home --change-interface=eth0</span><br></pre></td></tr></table></figure>
-
-<h2 id="zone-settings"><a href="#zone-settings" class="headerlink" title="zone settings"></a>zone settings</h2><h3 id="service"><a href="#service" class="headerlink" title="service"></a>service</h3><p>show service can be added by firewalld</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">firewall-cmd --get-services</span><br></pre></td></tr></table></figure>
-
-<p>show current service</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">firewall-cmd --zone=public --list-services</span><br></pre></td></tr></table></figure>
-
-<p>add and remove service</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">firewall-cmd [--zone=public] --add-service=https [--permanent]</span><br><span class="line">firewall-cmd --remove-service=https --permanent</span><br></pre></td></tr></table></figure>
-
-<p>show port(port used by service will not show here)</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">firewall-cmd --zone=public --list-ports</span><br></pre></td></tr></table></figure>
-
-<h3 id="port"><a href="#port" class="headerlink" title="port"></a>port</h3><p>list ports</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">firewall-cmd --zone=public --list-ports</span><br></pre></td></tr></table></figure>
-
-<p>add port</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">firewall-cmd --zone=public --permanent --add-port=5000/tcp</span><br><span class="line">firewall-cmd --zone=public --add-port=4990-4999/udp</span><br></pre></td></tr></table></figure>
-
-<p>block ICMP</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">firewall-cmd --zone=public --add-icmp-block=echo-reply</span><br><span class="line">firewall-cmd --zone=public --add-icmp-block=echo-request</span><br></pre></td></tr></table></figure>
-
-<h2 id="Forward"><a href="#Forward" class="headerlink" title="Forward"></a>Forward</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># first enable IP address masquerading for a zone</span></span><br><span class="line">firewall-cmd --zone=public --add-masquerade</span><br><span class="line"></span><br><span class="line"><span class="comment"># forward port to other ip's other port </span></span><br><span class="line">firewall-cmd --zone=external --add-forward-port=port=22:proto=tcp:toport=2055:toaddr=192.0.2.55</span><br></pre></td></tr></table></figure>
-
-<h2 id="after-setting"><a href="#after-setting" class="headerlink" title="after setting"></a>after setting</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">systemctl restart network</span><br><span class="line">systemctl reload firewalld</span><br></pre></td></tr></table></figure>
-
-<h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><p><a href="https://docs.fedoraproject.org/en-US/Fedora/19/html/Security_Guide/sec-Configure_Port_Forwarding-CLI.html" target="_blank" rel="noopener">Configure Port Forwarding using the CLI</a></p>
-<p><a href="https://www.digitalocean.com/community/tutorials/how-to-set-up-a-firewall-using-firewalld-on-centos-7" target="_blank" rel="noopener">How To Set Up a Firewall Using FirewallD on CentOS 7</a></p>
-<p><a href="https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/7/" target="_blank" rel="noopener">redhat epel documentation</a></p>
-
+          <p>Very basic intro to firewall and common commands</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2020/04/19/guide_to_firewall/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
       
     </div>
 
@@ -509,349 +461,6 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://wilkice.github.io/2019/08/17/n6sl1NNvn/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Darcy">
-      <meta itemprop="description" content="我喝牛奶要加冰">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Jiabin's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2019/08/17/n6sl1NNvn/" class="post-title-link" itemprop="url">JS notes</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2019-08-17 01:38:48 / 修改时间：01:45:47" itemprop="dateCreated datePublished" datetime="2019-08-17T01:38:48+08:00">2019-08-17</time>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <ol>
-<li>Placing scripts at the bottom of the <code>&lt;body&gt;</code> element improves the display speed, because script interpretation slows down the display.</li>
-<li></li>
-</ol>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://wilkice.github.io/2019/08/17/MbjcE_Mf_/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Darcy">
-      <meta itemprop="description" content="我喝牛奶要加冰">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Jiabin's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2019/08/17/MbjcE_Mf_/" class="post-title-link" itemprop="url">CSS note</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2019-08-17 01:04:03 / 修改时间：01:46:22" itemprop="dateCreated datePublished" datetime="2019-08-17T01:04:03+08:00">2019-08-17</time>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <ol>
-<li><img src="https://wilkice.github.io/post-images/1565975144114.png" alt></li>
-<li>id and class name can’t start with number</li>
-<li><code>p.center</code> will select all p element whose class <strong>contains</strong> center, so <code>&lt;p class=&quot;center ddi&quot;&gt;&lt;/p&gt;</code> will be selected.<br><img src="https://wilkice.github.io/post-images/1565975236637.png" alt></li>
-<li><img src="https://wilkice.github.io/post-images/1565975466051.png" alt></li>
-<li><img src="https://wilkice.github.io/post-images/1565975710441.png" alt></li>
-<li><a href="https://www.w3schools.com/css/css_howto.asp" target="_blank" rel="noopener">Where to insert css</a></li>
-<li><img src="https://wilkice.github.io/post-images/1565976425251.png" alt></li>
-<li>have question<img src="https://wilkice.github.io/post-images/1565976466117.png" alt></li>
-</ol>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://wilkice.github.io/2019/08/11/XcNESsno1/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Darcy">
-      <meta itemprop="description" content="我喝牛奶要加冰">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Jiabin's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2019/08/11/XcNESsno1/" class="post-title-link" itemprop="url">记一次 Wifi 蹭网经历</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2019-08-11 00:35:29 / 修改时间：00:57:25" itemprop="dateCreated datePublished" datetime="2019-08-11T00:35:29+08:00">2019-08-11</time>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>当你蹭到一个 Wifi，进入路由器后台发现没密码你会怎么做？🤷‍♂️</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2019/08/11/XcNESsno1/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://wilkice.github.io/2019/08/11/PaCeCKNX_/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Darcy">
-      <meta itemprop="description" content="我喝牛奶要加冰">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Jiabin's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2019/08/11/PaCeCKNX_/" class="post-title-link" itemprop="url">Bolg 设置</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2019-08-11 00:21:36 / 修改时间：00:30:59" itemprop="dateCreated datePublished" datetime="2019-08-11T00:21:36+08:00">2019-08-11</time>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>如何加快自己博客的访问速度</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2019/08/11/PaCeCKNX_/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://wilkice.github.io/2019/07/30/elk/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Darcy">
-      <meta itemprop="description" content="我喝牛奶要加冰">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Jiabin's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2019/07/30/elk/" class="post-title-link" itemprop="url">ELK</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2019-07-30 11:08:23" itemprop="dateCreated datePublished" datetime="2019-07-30T11:08:23+08:00">2019-07-30</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2019-07-31 17:51:20" itemprop="dateModified" datetime="2019-07-31T17:51:20+08:00">2019-07-31</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>Installation:<br><a href="https://www.cnblogs.com/xiaobaozi-95/p/9214307.html" target="_blank" rel="noopener">logstash配置文件</a></p>
-<p>Start:<br><code>nohup ./elasticsearch &amp;</code><br><code>./bin/logstash</code></p>
-<p>Settings:<br><code>logstash.yml</code>:<br><code>pipeline.id</code>, <code>pipeline worker</code></p>
-<p><code>pipeline.yml</code>:<br><code>pipeline.id, pipeline.worker, config path</code></p>
-<p><code>conf file</code>:</p>
-<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">input&#123;</span></span><br><span class="line">     <span class="string">jdbc</span> <span class="string">&#123;</span></span><br><span class="line">         <span class="string">jdbc_driver_library</span> <span class="string">=&gt;</span> <span class="string">"/home/user/data/elastic/logstash-6.2.4/mysql-connector-java-5.1.44.jar"</span></span><br><span class="line">         <span class="string">jdbc_driver_class</span> <span class="string">=&gt;</span> <span class="string">"com.mysql.jdbc.Driver"</span></span><br><span class="line">         <span class="string">jdbc_connection_string</span> <span class="string">=&gt;</span> <span class="string">"jdbc:mysql://localhost:3306/scrape"</span></span><br><span class="line">         <span class="string">jdbc_user</span> <span class="string">=&gt;</span> <span class="string">"username"</span></span><br><span class="line">         <span class="string">jdbc_password</span> <span class="string">=&gt;</span> <span class="string">"password"</span></span><br><span class="line">         <span class="string">jdbc_paging_enabled</span> <span class="string">=&gt;</span> <span class="string">"true"</span></span><br><span class="line">         <span class="string">jdbc_page_size</span> <span class="string">=&gt;</span> <span class="string">"1000"</span></span><br><span class="line">         <span class="string">jdbc_default_timezone</span> <span class="string">=&gt;"Asia/Shanghai"</span></span><br><span class="line">         <span class="string">schedule</span> <span class="string">=&gt;</span> <span class="string">"* * * * *"</span></span><br><span class="line">         <span class="string">statement</span> <span class="string">=&gt;</span> <span class="string">"select * from github"</span></span><br><span class="line">       <span class="string">&#125;</span></span><br><span class="line"><span class="string">&#125;</span></span><br><span class="line"></span><br><span class="line"><span class="string">output</span> <span class="string">&#123;</span></span><br><span class="line">    <span class="string">elasticsearch</span> <span class="string">&#123;</span></span><br><span class="line">        <span class="string">hosts</span> <span class="string">=&gt;</span> <span class="string">["localhost:9200"]</span></span><br><span class="line">        <span class="string">index</span> <span class="string">=&gt;</span> <span class="string">"your index"</span></span><br><span class="line"></span><br><span class="line">    <span class="string">&#125;</span></span><br><span class="line"><span class="string">&#125;</span></span><br></pre></td></tr></table></figure>
-
-<p>To-do list:</p>
-<ol>
-<li>Visit from public<br>Reference:<br><a href="https://blog.csdn.net/Baristas/article/details/78957311" target="_blank" rel="noopener">ElasticSearch设定外网访问9200端口</a></li>
-<li>Startup error</li>
-</ol>
-<p>Reference:<br><a href="https://stackoverflow.com/a/43207897/10046127" target="_blank" rel="noopener">https://stackoverflow.com/a/43207897/10046127</a><br>Delete <code>.kibana</code> index if kibana homepage is blank.</p>
-<blockquote>
-<p><code>DELETE .kibana</code></p>
-</blockquote>
-<p><strong>FAQ:</strong><br><a href="https://stackoverflow.com/a/48556910/10046127" target="_blank" rel="noopener">Check ELK version</a><br><a href="https://elasticsearch-py.readthedocs.io/en/master/" target="_blank" rel="noopener">Python Elasticsearch Client</a><br><a href="https://cuiqingcai.com/6214.html" target="_blank" rel="noopener">Elasticsearch 基本介绍及其与 Python 的对接实现</a><br><a href="https://blog.csdn.net/superGrant/article/details/88293715" target="_blank" rel="noopener">logstash将mysql数据导入es</a><br><a href="https://blog.csdn.net/n009ww/article/details/93204646" target="_blank" rel="noopener">Logstash 从mysql导入到Elasticsearch（全量导入）</a><br><a href="https://datascience-enthusiast.com/Miscellaneous/MySQL_to_ELK.html" target="_blank" rel="noopener">Importing Data from MySQL to Elasticsearch to Visualize it with Kibana</a><br><a href="https://www.elastic.co/blog/logstash-jdbc-input-plugin" target="_blank" rel="noopener">INSERT INTO LOGSTASH SELECT DATA FROM DATABASE</a><br><a href="https://stackoverflow.com/questions/42300463/elasticsearch-bootstrap-checks-failing" target="_blank" rel="noopener">Elasticsearch - Bootstrap checks failing</a><br><a href="https://programmer.help/blogs/importing-mysql-data-into-es-with-jdbc-input-plugin-in-logstash.html" target="_blank" rel="noopener">Importing mysql data into ES with Jdbc input plugin in Logstash</a></p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://wilkice.github.io/2019/07/29/ssh/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -936,11 +545,356 @@
   
   
 
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://wilkice.github.io/2019/07/24/zu-fang-zhu-yi-shi-xiang/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Darcy">
+      <meta itemprop="description" content="我喝牛奶要加冰">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Jiabin's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2019/07/24/zu-fang-zhu-yi-shi-xiang/" class="post-title-link" itemprop="url">租房注意事项</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-07-24 21:36:18" itemprop="dateCreated datePublished" datetime="2019-07-24T21:36:18+08:00">2019-07-24</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-04-22 16:51:07" itemprop="dateModified" datetime="2020-04-22T16:51:07+08:00">2020-04-22</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p> 一个原则：先知道自己不能接受什么，按照这个标准去挑</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2019/07/24/zu-fang-zhu-yi-shi-xiang/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://wilkice.github.io/2019/06/21/python/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Darcy">
+      <meta itemprop="description" content="我喝牛奶要加冰">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Jiabin's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2019/06/21/python/" class="post-title-link" itemprop="url">Python </a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-06-21 00:43:42" itemprop="dateCreated datePublished" datetime="2019-06-21T00:43:42+08:00">2019-06-21</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-04-22 17:19:47" itemprop="dateModified" datetime="2020-04-22T17:19:47+08:00">2020-04-22</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>Python 相关</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2019/06/21/python/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://wilkice.github.io/2019/06/14/duo-jin-cheng-duo-xian-cheng-duo-xie-cheng-yi-bu-tong-bu-zu-sai-fei-zu-sai/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Darcy">
+      <meta itemprop="description" content="我喝牛奶要加冰">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Jiabin's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2019/06/14/duo-jin-cheng-duo-xian-cheng-duo-xie-cheng-yi-bu-tong-bu-zu-sai-fei-zu-sai/" class="post-title-link" itemprop="url">多进程，多线程，多协程，异步，同步，阻塞，非阻塞</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2019-06-14 16:49:52 / 修改时间：17:25:25" itemprop="dateCreated datePublished" datetime="2019-06-14T16:49:52+08:00">2019-06-14</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>进程，线程，协程，同步，异步，阻塞，非阻塞的区别😊</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2019/06/14/duo-jin-cheng-duo-xian-cheng-duo-xie-cheng-yi-bu-tong-bu-zu-sai-fei-zu-sai/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://wilkice.github.io/2019/06/08/kai-fa-huan-jing-pei-zhi/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Darcy">
+      <meta itemprop="description" content="我喝牛奶要加冰">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Jiabin's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2019/06/08/kai-fa-huan-jing-pei-zhi/" class="post-title-link" itemprop="url">开发环境配置</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-06-08 12:10:10" itemprop="dateCreated datePublished" datetime="2019-06-08T12:10:10+08:00">2019-06-08</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-04-22 17:16:57" itemprop="dateModified" datetime="2020-04-22T17:16:57+08:00">2020-04-22</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>Using Vs code to connect to WSL or SSH to any remote machine.<br><a href="https://code.visualstudio.com/docs/remote/wsl#_getting-started" target="_blank" rel="noopener">VS code on WSL</a></p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2019/06/08/kai-fa-huan-jing-pei-zhi/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://wilkice.github.io/2019/06/05/kde-connect-manjaro-he-android-wu-hen-lian-jie/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Darcy">
+      <meta itemprop="description" content="我喝牛奶要加冰">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Jiabin's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2019/06/05/kde-connect-manjaro-he-android-wu-hen-lian-jie/" class="post-title-link" itemprop="url">KDE Connect: Manjaro 和 Android 无痕链接</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-06-05 23:39:39" itemprop="dateCreated datePublished" datetime="2019-06-05T23:39:39+08:00">2019-06-05</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-04-22 17:17:46" itemprop="dateModified" datetime="2020-04-22T17:17:46+08:00">2020-04-22</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>在 Manjaro KDE 发行版里面有一个叫做 KDE Connect 的软件。当你的安卓手机上也装有这个软件时，在局域网内可以剪贴板自动同步，双向发送文件， 以及用手机操控电脑，更厉害的是还支持手机端运行特定命令，如开关机，锁屏，音量控制等，很多 Command 能做的事现在都可以在手机上做。</p>
+<p>Reference:<br><a href="https://www.reddit.com/r/kde/comments/90xb3x/kde_connect_useful_commands_compilation/" target="_blank" rel="noopener">https://www.reddit.com/r/kde/comments/90xb3x/kde_connect_useful_commands_compilation/</a><br><a href="https://userbase.kde.org/KDE_Connect/Tutorials/Useful_commands" target="_blank" rel="noopener">https://userbase.kde.org/KDE_Connect/Tutorials/Useful_commands</a><br>:smiley:</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
 
   
-  <nav class="pagination">
-    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
-  </nav>
 
 
 
@@ -1005,12 +959,12 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">25</span>
+          <span class="site-state-item-count">10</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-tags">
-        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-count">7</span>
         <span class="site-state-item-name">标签</span>
       </div>
   </nav>
