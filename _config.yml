@@ -17,10 +17,13 @@ timezone: Asia/Shanghai # https://en.wikipedia.org/wiki/List_of_tz_database_time
 include:
   - _pages
 
+# github default plugin
+# https://docs.github.com/en/pages/setting-up-a-github-pages-site-with-jekyll/about-github-pages-and-jekyll#plugins
 plugins:
   - jekyll-sitemap
   - jekyll-feed
   - jemoji
+  - jekyll-seo-tag
   - jekyll-include-cache
 
 author:
