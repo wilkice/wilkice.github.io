@@ -51,4 +51,37 @@ go build $(LDFLAGS)
 
 这个处理就比较友好了。在我们代码提交并且通过了 CI 之后，我们就可以打上 git tag 发布了。在 makefile 编译的时候，会把当前 git 的 tag 信息传递给我们的程序，这样我们不用一直记着来修改这个版本信息，也不用单独用一个 commit 来配置版本了。
 
+### 示例
+一个简单的`main.go`文件，打印当前的版本号
+```go
+package main
+
+import "fmt"
+
+var version string
+
+func main() {
+	fmt.Println(version)
+}
+```
+我们可以通过命令
+```bash
+go build -ldflags='-X "main.version=v1.5"'
+```
+来在编译时修改 `main` 中的 `version` 的值。当编译后执行时，结果为
+```bash
+v1.5
+```
+> 你有没有注意到上面的 `version` 不是 `Version`，虽然没有 exported 但是一样可以设置哦
+
+如果将这次 git commit 提交的 SHA-1 checksum 作为版本号，那么makefile的编译命令可以这么写
+```makefile
+version := $(shell git describe --always)
+build:
+	go build -ldflags='-X "main.version=${version}"'
+```
+另外，如果是需要修改我们内部包的变量，也是可以设置的哦。只需要把 `main` 改成内部包的包名就可以了。比如我想要修改 `my-module/app/config` 中 `key` 的值，那么只需要把上面命令中的 `main.version` 改成 `my-module/app/config.key=1234455` 即可。
+```bash
+go build -ldflags='-X "my-module/app/config.key=1234455"'
+```
 
